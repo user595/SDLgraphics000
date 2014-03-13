@@ -4,6 +4,7 @@ and may not be redistributed without written permission.*/
 //The headers
 #include "SDL.h"
 #include "SDL_image.h"
+#include "SDL_ttf.h"
 #include <string>
 
 //Screen attributes
@@ -15,13 +16,19 @@ const int SCREEN_BPP = 32;
 SDL_Surface *image = NULL;
 SDL_Surface *screen = NULL;
 SDL_Surface *dots = NULL;
+SDL_Surface *message = NULL;
 
 //The event structure that will be used
 SDL_Event event;
 
+//The font that's going to be used
+TTF_Font *font = NULL;
+
+//The color of the font
+SDL_Color textColor = { 2, 2, 2 };//255,255,255 is white?
+
 //The portions of the sprite map to be blitted
 SDL_Rect clip[ 4 ];
-
 
 SDL_Surface *load_image( std::string filename )
 {
@@ -55,6 +62,15 @@ bool load_files()
 
     //If there was an problem loading the sprite map
     if( dots == NULL )
+    {
+        return false;
+    }
+
+    //Open the font
+    font = TTF_OpenFont( "lazy.ttf", 28 );
+
+    //If there was an error in loading the font
+    if( font == NULL )
     {
         return false;
     }
@@ -94,6 +110,12 @@ bool init()
         return false;
     }
 
+    //Initialize SDL_ttf
+    if( TTF_Init() == -1 )
+    {
+        return false;
+    }
+
     //Set the window caption
     SDL_WM_SetCaption( "PNG test", NULL );
 
@@ -105,6 +127,12 @@ void clean_up()
 {
     //Free the surface
     SDL_FreeSurface( image );
+
+    //Close the font that was used
+    TTF_CloseFont( font );
+
+    //Quit SDL_ttf
+    TTF_Quit();
 
     //Quit SDL
     SDL_Quit();
@@ -144,16 +172,16 @@ int main( int argc, char* args[] )
     if( image == NULL )
     {
         return 1;
-    }
-
-    //Apply the surface to the screen
-    apply_surface( 0, 0, image, screen );
+    } 
 
     //Load the files
     if( load_files() == false )
     {
         return 1;
     }
+
+    //Apply the surface to the screen
+    apply_surface( 0, 0, image, screen );
 
     //Clip range for the top left
     clip[ 0 ].x = 0;
@@ -184,6 +212,16 @@ int main( int argc, char* args[] )
     apply_surface( 540, 0, dots, screen, &clip[ 1 ] );
     apply_surface( 0, 380, dots, screen, &clip[ 2 ] );
     apply_surface( 540, 380, dots, screen, &clip[ 3 ] );
+
+    //Render the text
+    message = TTF_RenderText_Solid( font, "The quick brown fox jumps over the lazy frog", textColor );
+	apply_surface( 0, 150, message, screen );
+
+    //If there was an error in rendering the text
+    if( message == NULL )
+    {
+        return 1;
+    }
 
     //Update the screen
     if( SDL_Flip( screen ) == -1 )
