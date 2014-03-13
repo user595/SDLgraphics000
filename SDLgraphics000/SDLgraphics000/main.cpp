@@ -14,9 +14,14 @@ const int SCREEN_BPP = 32;
 //The surfaces
 SDL_Surface *image = NULL;
 SDL_Surface *screen = NULL;
+SDL_Surface *dots = NULL;
 
 //The event structure that will be used
 SDL_Event event;
+
+//The portions of the sprite map to be blitted
+SDL_Rect clip[ 4 ];
+
 
 SDL_Surface *load_image( std::string filename )
 {
@@ -43,7 +48,23 @@ SDL_Surface *load_image( std::string filename )
     return optimizedImage;
 }
 
-void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination )
+bool load_files()
+{
+    //Load the sprite map
+    dots = load_image( "dots.png" );
+
+    //If there was an problem loading the sprite map
+    if( dots == NULL )
+    {
+        return false;
+    }
+
+    //If eveything loaded fine
+    return true;
+}
+
+
+void apply_surface_four_arg( int x, int y, SDL_Surface* source, SDL_Surface* destination )
 {
     //Rectangle to hold the offsets
     SDL_Rect offset;
@@ -89,6 +110,20 @@ void clean_up()
     SDL_Quit();
 }
 
+void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination, SDL_Rect* clip = NULL )
+{
+    //Holds offsets
+    SDL_Rect offset;
+
+    //Get offsets
+    offset.x = x;
+    offset.y = y;
+
+    //Blit
+    SDL_BlitSurface( source, clip, destination, &offset );
+}
+
+
 int main( int argc, char* args[] )
 {
 
@@ -113,6 +148,42 @@ int main( int argc, char* args[] )
 
     //Apply the surface to the screen
     apply_surface( 0, 0, image, screen );
+
+    //Load the files
+    if( load_files() == false )
+    {
+        return 1;
+    }
+
+    //Clip range for the top left
+    clip[ 0 ].x = 0;
+    clip[ 0 ].y = 0;
+    clip[ 0 ].w = 100;
+    clip[ 0 ].h = 100;
+
+    //Clip range for the top right
+    clip[ 1 ].x = 100;
+    clip[ 1 ].y = 0;
+    clip[ 1 ].w = 100;
+    clip[ 1 ].h = 100;
+
+    //Clip range for the bottom left
+    clip[ 2 ].x = 0;
+    clip[ 2 ].y = 100;
+    clip[ 2 ].w = 100;
+    clip[ 2 ].h = 100;
+
+    //Clip range for the bottom right
+    clip[ 3 ].x = 100;
+    clip[ 3 ].y = 100;
+    clip[ 3 ].w = 100;
+    clip[ 3 ].h = 100;
+
+    //Apply the sprites to the screen
+    apply_surface( 0, 0, dots, screen, &clip[ 0 ] );
+    apply_surface( 540, 0, dots, screen, &clip[ 1 ] );
+    apply_surface( 0, 380, dots, screen, &clip[ 2 ] );
+    apply_surface( 540, 380, dots, screen, &clip[ 3 ] );
 
     //Update the screen
     if( SDL_Flip( screen ) == -1 )
