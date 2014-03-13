@@ -15,6 +15,9 @@ const int SCREEN_BPP = 32;
 SDL_Surface *image = NULL;
 SDL_Surface *screen = NULL;
 
+//The event structure that will be used
+SDL_Event event;
+
 SDL_Surface *load_image( std::string filename )
 {
     //The image that's loaded
@@ -88,6 +91,11 @@ void clean_up()
 
 int main( int argc, char* args[] )
 {
+
+    //Make sure the program waits for a quit
+    bool quit = false;
+
+
     //Initialize
     if( init() == false )
     {
@@ -112,8 +120,20 @@ int main( int argc, char* args[] )
         return 1;
     }
 
-    //Wait 2 seconds
-    SDL_Delay( 2000 );
+    //While the user hasn't quit
+    while( quit == false )
+    {
+        //While there's an event to handle
+        while( SDL_PollEvent( &event ) )
+        {
+            //If the user has Xed out the window
+            if( event.type == SDL_QUIT )
+            {
+                //Quit the program
+                quit = true;
+            }
+        }
+    }
 
     //Free the surface and quit SDL
     clean_up();

@@ -1,4 +1,4 @@
-﻿Build started 13/03/2014 2:02:33 PM.
+﻿Build started 13/03/2014 2:14:49 PM.
      1>Project "C:\Users\userone\Documents\GitHub\SDLgraphics000\SDLgraphics000\SDLgraphics000\SDLgraphics000.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\SDLgraphics000.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -19,4 +19,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.34
+Time Elapsed 00:00:01.42
