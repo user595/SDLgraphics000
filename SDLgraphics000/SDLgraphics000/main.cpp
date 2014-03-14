@@ -7,9 +7,9 @@ and may not be redistributed without written permission.*/
 #include "SDL_ttf.h"
 #include <string>
 
-//Screen attributes
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+//Screen attributes	/* 300x200;  640x480;  1280x960; 1920x1080 */
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 960;
 const int SCREEN_BPP = 32;
 
 //Flip flags
